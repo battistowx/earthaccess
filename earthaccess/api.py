@@ -8,6 +8,7 @@ from typing_extensions import Any, Dict, List, Mapping, Optional, Union, depreca
 
 import earthaccess
 from earthaccess.services import DataServices
+from earthaccess.variables import DataVariables
 
 from .auth import Auth
 from .results import DataCollection, DataGranule
@@ -159,6 +160,32 @@ def search_services(count: int = -1, **kwargs: Any) -> List[Any]:
 
     return query.get(hits if count < 1 else min(count, hits))
 
+def search_variables(count: int = -1, **kwargs: Any) -> List[Any]:
+    """Search the NASA CMR for variables matching criteria.
+
+    See <https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#variable>.
+
+    Parameters:
+        count:
+            maximum number of variables to fetch (if less than 1, all variables
+            matching specified criteria are fetched [default])
+        kwargs:
+            keyword arguments accepted by the CMR for searching variables
+
+    Returns:
+        list of variables (possibly empty) matching specified criteria, in UMM
+        JSON format
+
+    Examples:
+        ```python
+        variables = search_variables(provider="GES_DISC", short_name="M2T1NXSLV.5.12.4)
+        ```
+    """
+    query = DataVariables(auth=earthaccess.__auth__).parameters(**kwargs)
+    hits = query.hits()
+    logger.info(f"Variables found: {hits}")
+
+    return query.get(hits if count < 1 else min(count, hits))
 
 def login(strategy: str = "all", persist: bool = False, system: System = PROD) -> Auth:
     """Authenticate with Earthdata login (https://urs.earthdata.nasa.gov/).
