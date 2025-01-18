@@ -6,6 +6,7 @@ import earthaccess
 
 from .formatters import _repr_granule_html
 from .services import DataServices
+from .variables import DataVariables
 
 
 class CustomDict(dict):
@@ -190,6 +191,16 @@ class DataCollection(CustomDict):
         )
 
         return {service: query.get_all() for service, query in zip(services, queries)}
+
+    def variables(self) -> Dict[Any, List[Dict[str, Any]]]:
+        """Return list of variables available for this collection."""
+        variables = self.get("meta", {}).get("associations", {}).get("variables", [])
+        queries = (
+            DataVariables(auth=earthaccess.__auth__).parameters(concept_id=variable)
+            for variable in variables
+        )
+
+        return {variable: query.get_all() for variable, query in zip(variables, queries)}
 
     def __repr__(self) -> str:
         return json.dumps(
