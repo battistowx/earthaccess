@@ -1,12 +1,12 @@
 import requests
 from typing_extensions import Any, List, Union
 
-from cmr import CollectionQuery, GranuleQuery, ServiceQuery
+from cmr import CollectionQuery, GranuleQuery, ServiceQuery, VariableQuery
 
 
 def get_results(
     session: requests.Session,
-    query: Union[CollectionQuery, GranuleQuery, ServiceQuery],
+    query: Union[CollectionQuery, GranuleQuery, ServiceQuery, VariableQuery],
     limit: int = 2000,
 ) -> List[Any]:
     """Get all results up to some limit, even if spanning multiple pages.
